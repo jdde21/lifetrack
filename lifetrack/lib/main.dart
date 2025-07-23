@@ -3,6 +3,7 @@ import 'package:lifetrack/graphs/pie_chart.dart';
 import 'package:lifetrack/screens/home.dart';
 import 'package:lifetrack/screens/home_expenses.dart';
 import 'package:lifetrack/screens/home_gym.dart';
+import 'package:lifetrack/screens/home_study.dart';
 import 'forms/first.dart';
 import 'forms/second.dart';
 import 'forms/third.dart';
@@ -28,7 +29,7 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (context) => FirestoreProvider())],
       child: MaterialApp(
         routes: {
-          '/': (context) => HomePage(),
+          '/': (context) => HomePageStudy(),
           '/home': (context) => HomePage(),
           '/expenses': (context) => HomePageExpenses(),
           '/gym': (context) => HomePageGym(),

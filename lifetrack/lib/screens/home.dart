@@ -39,8 +39,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> getVisits() async {
     DateTime now = DateTime.now();
-    String date =
-        "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+    String date = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
     List<dynamic> visits = await context.read<FirestoreProvider>().fetchVisits(
       "aoFkTzmVJUXE0vRRIJACPcHWo3m1",
       date,
@@ -204,7 +203,7 @@ class _HomePageState extends State<HomePage> {
                       child: HeatMap(
                         textColor: Colors.black,
                         size: 35,
-                        startDate: DateTime(now.year, now.month, 1),
+           
                         endDate: DateTime(now.year, now.month + 1, 0),
                         datasets: dates,
                         defaultColor: Color(0xFFE0E0E0),
@@ -213,11 +212,11 @@ class _HomePageState extends State<HomePage> {
                         showText: true,
                         scrollable: true,
                         colorsets: {
-                          1: Color.fromARGB(255, 33, 150, 243),
-                          2: Color.fromARGB(265, 33, 150, 243),
-                          3: Color.fromARGB(275, 33, 150, 243),
-                          4: Color.fromARGB(285, 33, 150, 243),
-                          5: Color.fromARGB(295, 33, 150, 243),
+                          1: Color.fromARGB(255, 91, 179, 252),
+                          2: Color.fromARGB(255, 71, 149, 222),
+                          3: Color.fromARGB(255, 51, 119, 192),
+                          4: Color.fromARGB(255, 31, 89, 162),
+                          5: Color.fromARGB(255, 21, 59, 132),
                         },
                       ),
                     ),

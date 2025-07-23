@@ -43,6 +43,7 @@ dependencies:
   font_awesome_flutter: ^10.8.0
   flutter_map_heatmap: ^0.0.8
   flutter_heatmap_calendar: ^1.0.5
+  stop_watch_timer: ^3.2.2
 
 dev_dependencies:
   flutter_test:
