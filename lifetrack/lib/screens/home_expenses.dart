@@ -26,7 +26,7 @@ class _HomeStateExpenses extends State<HomePageExpenses> {
   bool monthly = false;
   bool yearly = false;
 
-  List<String> labels = ["Home", "Gym", "Expenses"];
+  List<String> labels = ["Home", "Gym", "Expenses", "Study"];
   List<BottomNavigationBarItem> navItems = [
     BottomNavigationBarItem(
       label: "Home",
@@ -39,6 +39,10 @@ class _HomeStateExpenses extends State<HomePageExpenses> {
     BottomNavigationBarItem(
       label: "Expenses",
       icon: FaIcon(FontAwesomeIcons.moneyBill, size: 15),
+    ),
+    BottomNavigationBarItem(
+      label: "Study",
+      icon: FaIcon(FontAwesomeIcons.book, size: 15),
     ),
   ];
 
@@ -219,6 +223,7 @@ class _HomeStateExpenses extends State<HomePageExpenses> {
           } else if (yearly) {
             subtitle = "year-over-year change";
           }
+          print("im adsd");
 
           List<PieChartSectionData> sectionData = [];
           int touchedIndex = -1;
@@ -227,11 +232,16 @@ class _HomeStateExpenses extends State<HomePageExpenses> {
             final fontSize = isTouched ? 25.0 : 16.0;
             final radius = isTouched ? 60.0 : 50.0;
             const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
-
             sectionData.add(
               PieChartSectionData(
-                value: double.parse(percentages[nameOfExpenses[i]]),
-                title: percentages[nameOfExpenses[i]],
+                value:
+                    double.parse(percentages[nameOfExpenses[i]]).isNaN
+                        ? 0
+                        : double.parse(percentages[nameOfExpenses[i]]),
+                title:
+                    percentages[nameOfExpenses[i]] == "Nan"
+                        ? 0
+                        : percentages[nameOfExpenses[i]],
                 radius: radius,
                 titleStyle: TextStyle(
                   fontSize: fontSize,
@@ -291,8 +301,9 @@ class _HomeStateExpenses extends State<HomePageExpenses> {
                                         ? "Total summary: ${totalSummaryExpenses[nameOfExpenses[index]]} PHP"
                                         : "$summary ${summaryExpenses[nameOfExpenses[index]]} PHP",
                                     style: TextStyle(
-                                      fontSize: 7,
+                                      fontSize: 6,
                                       color: Colors.white,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
@@ -344,33 +355,68 @@ class _HomeStateExpenses extends State<HomePageExpenses> {
                   ),
                 ),
               ),
-              Container(
-                width: 350,
-                child: Card(
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+              double.parse(percentages[nameOfExpenses[0]]).isNaN
+                  ? Container(
+                    width: 350,
+                    child: Card(
+                      elevation: 4,
+                      margin: const EdgeInsets.all(12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "No data available",
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              "Upload your expenses for today",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                  : Container(
+                    width: 350,
+                    child: Card(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 40),
+                        child: PieChartSample1(percentages: percentages),
+                      ),
+                    ),
                   ),
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 40),
-                    child: PieChartSample1(percentages: percentages),
-                  ),
-                ),
-              ),
               Padding(
-              padding: EdgeInsets.only(left: 20),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Expense ratio',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16, // Large font size
-                    fontWeight: FontWeight.bold, // Bold for emphasis
+                padding: EdgeInsets.only(left: 20),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Expense ratio',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16, // Large font size
+                      fontWeight: FontWeight.bold, // Bold for emphasis
+                    ),
                   ),
                 ),
               ),
-            ),
               Container(
                 width: 400,
                 child: Card(
@@ -519,6 +565,7 @@ class _HomeStateExpenses extends State<HomePageExpenses> {
         child: Icon(Icons.add, color: Colors.white),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.blue,
         currentIndex: currentIndex,
         onTap: (value) {
@@ -527,6 +574,8 @@ class _HomeStateExpenses extends State<HomePageExpenses> {
             Navigator.pushReplacementNamed(context, '/gym');
           } else if (labels[currentIndex] == "Home") {
             Navigator.pushReplacementNamed(context, '/home');
+          } else if (labels[currentIndex] == "Study") {
+            Navigator.pushReplacementNamed(context, '/study');
           }
         },
         items: navItems,
@@ -543,6 +592,10 @@ class _HomeStateExpenses extends State<HomePageExpenses> {
       data[0].add(categories[i]);
     }
     String uid = "aoFkTzmVJUXE0vRRIJACPcHWo3m1";
+    DateTime now = DateTime.now();
+    String formattedDate =
+        "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+    _dateController.text = formattedDate;
 
     showDialog(
       useSafeArea: false,
@@ -613,25 +666,27 @@ class _HomeStateExpenses extends State<HomePageExpenses> {
                                           child: Padding(
                                             padding: EdgeInsets.all(16),
                                             child: TextFormField(
+                                              textAlign: TextAlign.center,
                                               decoration: InputDecoration(
-                                                label: Align(
-                                                  alignment: Alignment.center,
-                                                  child: Text(
-                                                    category,
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
+                                                label: Text(category),
                                               ),
                                               validator: (value) {
-                                                if (value!.isEmpty) {
-                                                  return "Please enter an input";
-                                                } else {
-                                                  return null;
+                                                RegExp hasLetters = RegExp(
+                                                  r"\D",
+                                                ); // reference: https://blog.0xba1.xyz/0522/dart-flutter-regexp/ matches any character that is a digit
+                                                if (value == null ||
+                                                    value.isEmpty) {
+                                                  return "Please enter your amount";
+                                                } else if (hasLetters.hasMatch(
+                                                  value,
+                                                )) {
+                                                  return "Please enter a valid amount";
+                                                } else if (int.parse(value) <=
+                                                    0) {
+                                                  return "Please enter a valid amount";
                                                 }
+
+                                                return null;
                                               },
                                               onSaved: (value) {
                                                 data[1].add(value!);
@@ -677,8 +732,9 @@ class _HomeStateExpenses extends State<HomePageExpenses> {
                       visits[0] + 1,
                       visits[1],
                     );
+                    Navigator.of(context).pop();
                   }
-                  Navigator.of(context).pop();
+                  
                 },
               ),
             ],

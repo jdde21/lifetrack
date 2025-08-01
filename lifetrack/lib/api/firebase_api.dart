@@ -18,6 +18,18 @@ class FirebaseExerciseAPI {
       "userinfo",
   );
 
+  final CollectionReference studyDB = FirebaseFirestore.instance.collection(
+      "study",
+  );
+
+
+  Future<void> addStudyTime(int minuteTime, String date, String uid) 
+  {
+    return studyDB.doc(uid).set({
+      date: minuteTime
+    }, SetOptions(merge: true));
+  }
+
   Future<void> addUser(String firstName, String lastName, String uid) 
   {
     return userDB.doc(uid).set({
@@ -134,6 +146,20 @@ class FirebaseExerciseAPI {
     return returnList;
   }
 
+  Future<int> fetchStudyTime(String uid, String date) async {
+    DocumentSnapshot doc = await studyDB.doc(uid).get();
+    int studyTime = 0;
+    if (doc.exists)
+    {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      if (data[date] != null)
+      {
+        studyTime = data[date];
+      }
+    }
+    return studyTime;
+  }
+
   Stream<DocumentSnapshot> getData() {
     return db.doc("aoFkTzmVJUXE0vRRIJACPcHWo3m1").snapshots();
   }
@@ -144,5 +170,9 @@ class FirebaseExerciseAPI {
 
   Stream<DocumentSnapshot> getVisitsData() {
     return visitsDB.doc("aoFkTzmVJUXE0vRRIJACPcHWo3m1").snapshots();
+  }
+
+  Stream<DocumentSnapshot> getStudyData() {
+    return studyDB.doc("aoFkTzmVJUXE0vRRIJACPcHWo3m1").snapshots();
   }
 }

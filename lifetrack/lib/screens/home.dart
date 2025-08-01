@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   CarouselController carouselController = CarouselController(initialItem: 1);
   int currentIndex = 0;
-  List<String> labels = ["Home", "Gym", "Expenses"];
+  List<String> labels = ["Home", "Gym", "Expenses", "Study"];
   List<BottomNavigationBarItem> navItems = [
     BottomNavigationBarItem(
       label: "Home",
@@ -29,6 +29,10 @@ class _HomePageState extends State<HomePage> {
     BottomNavigationBarItem(
       label: "Expenses",
       icon: FaIcon(FontAwesomeIcons.moneyBill, size: 15),
+    ),
+    BottomNavigationBarItem(
+      label: "Study",
+      icon: FaIcon(FontAwesomeIcons.book, size: 15),
     ),
   ];
 
@@ -73,8 +77,10 @@ class _HomePageState extends State<HomePage> {
                 onTap: (index) {
                   if (index == 0) {
                     Navigator.pushReplacementNamed(context, '/gym');
-                  } else {
+                  } else if (index == 1) {
                     Navigator.pushReplacementNamed(context, '/expenses');
+                  } else {
+                    Navigator.pushReplacementNamed(context, '/study');
                   }
                 },
                 shrinkExtent: 100,
@@ -136,6 +142,43 @@ class _HomePageState extends State<HomePage> {
                         left: 12,
                         child: Text(
                           'Expenses',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black54,
+                                blurRadius: 4,
+                                offset: Offset(1, 1),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  Stack(
+                    children: [
+                      Container(
+                        width: MediaQuery.sizeOf(context).width - 32,
+                        height: MediaQuery.sizeOf(context).height,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(
+                              'assets/images/study.jpg',
+                            ), // Replace with your image path
+                            fit: BoxFit.cover,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 12,
+                        left: 12,
+                        child: Text(
+                          'Study',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -228,6 +271,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.blue,
         currentIndex: currentIndex,
         onTap: (value) {
@@ -239,6 +283,10 @@ class _HomePageState extends State<HomePage> {
           else if (labels[currentIndex] == "Gym")
           {
             Navigator.pushReplacementNamed(context, '/gym');
+          }
+          else if (labels[currentIndex] == "Study")
+          {
+            Navigator.pushReplacementNamed(context, '/study');
           }
 
         },

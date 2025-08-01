@@ -8,6 +8,7 @@ class FirestoreProvider with ChangeNotifier {
   late Stream<DocumentSnapshot> _exercisesStream;
   late Stream<DocumentSnapshot> _expensesStream;
   late Stream<DocumentSnapshot> _visitsStream;
+  late Stream<DocumentSnapshot> _studyStream;
 
   FirestoreProvider() {
     fetchExercise();
@@ -16,11 +17,13 @@ class FirestoreProvider with ChangeNotifier {
   Stream<DocumentSnapshot> get exercises => _exercisesStream;
   Stream<DocumentSnapshot> get expenses => _expensesStream;
   Stream<DocumentSnapshot> get visits => _visitsStream;
+  Stream<DocumentSnapshot> get studies => _studyStream;
 
   void fetchExercise() {
     _exercisesStream = authService.getData();
     _expensesStream = authService.getExpensesData();
     _visitsStream = authService.getVisitsData();
+    _studyStream = authService.getStudyData();
     notifyListeners();
   }
 
@@ -35,6 +38,10 @@ class FirestoreProvider with ChangeNotifier {
 
   Future<void> addExpense(List<List<String>> data, String date, String uid) async {
     await authService.addExpense(data, date, uid);
+  }
+
+  Future<void> addStudyTime(int minuteTime, String date, String uid) async {
+    await authService.addStudyTime(minuteTime, date, uid);
   }
 
   Future<void> addUser(String firstName, String lastName, String uid) async {
@@ -56,4 +63,10 @@ class FirestoreProvider with ChangeNotifier {
   Future<List> fetchVisits(String uid, String date) async {
     return authService.fetchVisits(uid, date);
   }
+
+  Future<int> fetchStudyTime(String uid, String date) async {
+    return authService.fetchStudyTime(uid, date);
+  }
+
+
 }

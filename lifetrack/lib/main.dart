@@ -4,6 +4,7 @@ import 'package:lifetrack/screens/home.dart';
 import 'package:lifetrack/screens/home_expenses.dart';
 import 'package:lifetrack/screens/home_gym.dart';
 import 'package:lifetrack/screens/home_study.dart';
+import 'package:lifetrack/screens/splash.dart';
 import 'forms/first.dart';
 import 'forms/second.dart';
 import 'forms/third.dart';
@@ -17,9 +18,13 @@ import 'screens/new_gym.dart';
 import 'screens/new_expense.dart';
 import 'providers/auth_provider.dart';
 import 'providers/firestore_provider.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  await Future.delayed(const Duration(milliseconds: 3000), () {});
+  FlutterNativeSplash.remove();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
@@ -29,11 +34,13 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (context) => FirestoreProvider())],
       child: MaterialApp(
         routes: {
-          '/': (context) => HomePageStudy(),
+          '/': (context) => Splash(),
           '/home': (context) => HomePage(),
           '/expenses': (context) => HomePageExpenses(),
           '/gym': (context) => HomePageGym(),
+          '/study': (context) => HomePageStudy(),
           '/new': (context) => NewUser(),
+          '/sign-in': (context) => SignIn(),
           '/sign-up': (context) => SignUp(),
           '/first': (context) => MyFormPage(),
           '/second': (context) => MySecondFormPage(),
@@ -42,6 +49,7 @@ Future<void> main() async {
       ),
     ),
   );
+  
 }
 
 class MyApp extends StatelessWidget {

@@ -30,7 +30,7 @@ class _HomeState extends State<HomePageGym> {
   Widget build(BuildContext context) {
     String uid = "aoFkTzmVJUXE0vRRIJACPcHWo3m1";
     int currentIndex = 1;
-    List<String> labels = ["Home", "Gym", "Expenses"];
+    List<String> labels = ["Home", "Gym", "Expenses", "Study"];
     List<BottomNavigationBarItem> navItems = [
       BottomNavigationBarItem(
         label: "Home",
@@ -44,8 +44,13 @@ class _HomeState extends State<HomePageGym> {
         label: "Expenses",
         icon: FaIcon(FontAwesomeIcons.moneyBill, size: 15),
       ),
+      BottomNavigationBarItem(
+        label: "Study",
+        icon: FaIcon(FontAwesomeIcons.book, size: 15),
+      ),
     ];
-    Stream<DocumentSnapshot> exerciseEntries = context.read<FirestoreProvider>().exercises;
+    Stream<DocumentSnapshot> exerciseEntries =
+        context.read<FirestoreProvider>().exercises;
 
     StreamBuilder sessionBuilder() {
       return StreamBuilder(
@@ -242,6 +247,12 @@ class _HomeState extends State<HomePageGym> {
         repsSetsWeight.add([]);
         data.add(exercises[i]);
       }
+
+      DateTime now = DateTime.now();
+      String formattedDate =
+          "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+      _dateController.text = formattedDate;
+
       showDialog(
         useSafeArea: false,
         context: context,
@@ -267,11 +278,18 @@ class _HomeState extends State<HomePageGym> {
                             label: Text("Date"),
                           ),
                           validator: (value) {
-                            if (value!.isEmpty) {
-                              return "Please enter an input";
-                            } else {
-                              return null;
+                            RegExp hasLetters = RegExp(
+                              r"\D",
+                            ); // reference: https://blog.0xba1.xyz/0522/dart-flutter-regexp/ matches any character that is a digit
+                            if (value == null || value.isEmpty) {
+                              return "Please enter your amount";
+                            } else if (hasLetters.hasMatch(value)) {
+                              return "Please enter a valid amount";
+                            } else if (int.parse(value) <= 0) {
+                              return "Please enter a valid amount";
                             }
+
+                            return null;
                           },
                           onTap: () async {
                             DateTime? pickedDate = await showDatePicker(
@@ -474,8 +492,15 @@ class _HomeState extends State<HomePageGym> {
                         _dateController.text,
                         uid,
                       );
-                      List<dynamic> visits = await context.read<FirestoreProvider>().fetchVisits(uid, _dateController.text);
-                      await context.read<FirestoreProvider>().addVisit(_dateController.text, uid, visits[0] + 1, visits[1]);
+                      List<dynamic> visits = await context
+                          .read<FirestoreProvider>()
+                          .fetchVisits(uid, _dateController.text);
+                      await context.read<FirestoreProvider>().addVisit(
+                        _dateController.text,
+                        uid,
+                        visits[0] + 1,
+                        visits[1],
+                      );
                     }
                     Navigator.of(context).pop();
                   },
@@ -719,19 +744,18 @@ class _HomeState extends State<HomePageGym> {
         child: Icon(Icons.add, color: Colors.white),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.blue,
         currentIndex: currentIndex,
         onTap: (value) {
           currentIndex = value;
-          if (labels[currentIndex] == "Expenses")
-          {
+          if (labels[currentIndex] == "Expenses") {
             Navigator.pushReplacementNamed(context, '/expenses');
-          }
-          else if (labels[currentIndex] == "Home")
-          {
+          } else if (labels[currentIndex] == "Home") {
             Navigator.pushReplacementNamed(context, '/home');
+          } else if (labels[currentIndex] == "Study") {
+            Navigator.pushReplacementNamed(context, '/study');
           }
-
         },
         items: navItems,
       ),
